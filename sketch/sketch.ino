@@ -3,31 +3,11 @@
 #include "soc/rtc_cntl_reg.h"
 
 bool lightState = true;
-bool adaptiveState = true;
 
-bool toggleSignal = false;
+bool lastState = true;
+bool state = false;
 
-bool state = true;
-bool lastState = false;
-
-bool error = false;
-
-void showFailure() {
-  error = true;
-  for(;;) { delay(10); }
-}
-
-void loop() {
-  if (!error) {
-    delay(10);
-    return;
-  }
-
-  digitalWrite(LED_BUILTIN, HIGH);
-  delay(100);
-  digitalWrite(LED_BUILTIN, LOW);
-  delay(100);
-}
+void loop() {}
 
 void disableBrownout() {
   WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
@@ -51,15 +31,6 @@ void initRtos() {
     ,  2048
     ,  NULL
     ,  2
-    ,  NULL
-  );
-
-  xTaskCreate(
-    StateSync
-    ,  "State Sync"
-    ,  2048
-    ,  NULL
-    ,  3
     ,  NULL
   );
   

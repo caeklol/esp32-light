@@ -10,36 +10,18 @@ void ServoSync(void *pvParameters) {
 
   for (;;) {
     if (lastState != state) {
-      lastState = state;
-      Serial.println(state);
+      Serial.println("Syncing state");
       if (state) {
         servo.write(60);
       } else {
         servo.write(120);
       }
-      continue;
-    }
-
-    if (!toggleSignal) {
+      lastState = state;
       delay(100);
+      servo.write(90);
       continue;
-    }
-
-    if (lightState != adaptiveState) {
-      adaptiveState = lightState;
-    }
-    
-    adaptiveState = !adaptiveState;
-    toggleSignal = false;
-    Serial.print("Updating state:");
-    Serial.println(adaptiveState);
-    if (adaptiveState) {
-      servo.write(60);
     } else {
-      servo.write(120);
+      delay(250);
     }
-
-    delay(500);
-    servo.write(90);
   }
 }
