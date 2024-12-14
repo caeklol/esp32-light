@@ -69,6 +69,8 @@ void handleIncoming() {
   
   if (req == "/toggle") {
     state = !state;
+    client.println(String(state));
+    client.println();
   }
 
   client.println("HTTP/1.1 200 OK\r\n\r\n");
@@ -93,14 +95,17 @@ void WifiServer(void *pvParameters) {
   Serial.println("Loading preferences...");
   preferences.begin("esp32-light", false);
 
+  WiFiCredentials creds = loadCreds();
+
   while (creds.ssid.isEmpty()) {
     Serial.println("Credentials are empty, waiting for recovery..."); // TODO
     delay(10000);
   }
-  
+
+  Serial.println("Connecting...");  
   for (;;) {
     if (WiFi.status() != WL_CONNECTED) {
-      WiFiCredentials creds = loadCreds();
+      creds = loadCreds();
       connectToWiFi(creds.ssid, creds.password);
     }
 
