@@ -1,18 +1,17 @@
-#include <WiFi.h>
+#include <Arduino.h>
+#include <Preferences.h>
 #include <ESPmDNS.h>
-#include <WiFiClient.h>
+#include <WebServer.h>
+#include <WiFi.h>
 
-const char* ssid = "credentials";  
-const char* password = "credentials";
+#include "wifi.h"
+#include "server.h"
 
-WiFiServer server(80);
+char* defaultSSID = "defaultSSID";  
+char* defaultPassword = "password";
 
-struct WiFiCredentials {
-  String ssid;
-  String password;
-};
-
-typedef WiFiCredentials WiFiCredentials;
+WebServer server(80);
+Preferences preferences;
 
 void setLED(bool state) {
   digitalWrite(LED_BUILTIN, state ? HIGH : LOW);
@@ -39,53 +38,20 @@ void connectToWiFi(const String& ssid, const String& password) {
 
   Serial.println("mDNS responder started");
   server.begin();
-  Serial.println("TCP server started");
+  Serial.println("Web server started");
 
   MDNS.addService("http", "tcp", 80);
   setLED(true);
 }
 
-void handleIncoming() {
-  WiFiClient client = server.available();
-  if (!client) return;
-
-  Serial.println("New client");
-
-  while (client.connected() && !client.available()) {
-    delay(1);
-  }
-
-  String req = client.readStringUntil('\r');
-  int addr_start = req.indexOf(' ');
-  int addr_end = req.indexOf(' ', addr_start + 1);
-  
-  if (addr_start == -1 || addr_end == -1) {
-    Serial.print("Invalid request: ");
-    Serial.println(req);
-    return;
-  }
-
-  req = req.substring(addr_start + 1, addr_end);
-  
-  if (req == "/toggle") {
-    state = !state;
-    client.println(String(state));
-    client.println();
-  }
-
-  client.println("HTTP/1.1 200 OK\r\n\r\n");
-  client.stop();
-  Serial.println("Response sent");
-}
-
-struct WiFiCredentials loadCreds() {
+WiFiCredentials loadCreds() {
   WiFiCredentials creds;
   creds.ssid = preferences.getString("ssid", "");
   creds.password = preferences.getString("password", "");
   
   if (creds.ssid.isEmpty()) {
-    creds.ssid = "";
-    creds.password = "";
+    creds.ssid = defaultSSID;
+    creds.password = defaultPassword;
   }
 
   return creds;
@@ -109,6 +75,6 @@ void WifiServer(void *pvParameters) {
       connectToWiFi(creds.ssid, creds.password);
     }
 
-    handleIncoming();
+    setupServerEndpoints();
   }
 }
