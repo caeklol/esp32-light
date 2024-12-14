@@ -31,7 +31,7 @@ void connectToWiFi(const String& ssid, const String& password) {
   Serial.print("IP: ");
   Serial.println(WiFi.localIP());
 
-  if (!MDNS.begin("esp32")) {
+  if (!MDNS.begin("cookie")) {
     Serial.println("Error setting up mDNS responder");
     return;
   }
