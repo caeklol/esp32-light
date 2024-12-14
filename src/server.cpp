@@ -13,10 +13,11 @@
 String getPage(String content) {
   String html = "<!DOCTYPE html><html><head>";
   html += "<meta name='viewport' content='width=device-width, initial-scale=1.0'>";
+  html += "<meta charset='UTF-8'>";
   html += "<title>Light Debug</title>";
   html += "<style>";
-  html += "body { background-color: black; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; color: white; }";
-  html += ".container { padding: 20px; border: 2px solid white; }";
+  html += "body { background-color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; color: black; }";
+  html += ".container { border-radius: 5px; padding: 20px; padding-right: 40px; padding-left: 40px; background-color: black; color: white; }";
   html += "</style>";
   html += "</head>";
   html += "<body><div class='container'>";
@@ -29,8 +30,8 @@ String getPage(String content) {
 void handleHome() {
   String content = "<h1>hello</h1>";
   content += "<div style='text-align:center;'>";
-  content += "<div style='font-size:48px;animation:bounce 1s infinite;'>👋</div>";
-  content += "<div style='background:#e8f5e9;padding:10px;border-radius:5px;margin-top:20px;'>";
+  content += "<div style='font-size:48px;animation:bounce 1s infinite;'>&#128075;</div>";
+  content += "<div class='container'>";
   content += "<h2>Light is currently</h2>";
   content += "<p><strong>";
   content += state ? "ON" : "OFF";
@@ -47,8 +48,9 @@ void handleToggle() {
 }
 
 void setupServerEndpoints() {
+  Serial.println("Setting up endpoints");
   server.on("/", handleHome);
   server.on("/toggle", handleToggle);
-  // server.on("/prefs", handleEdit);
+  //server.on("/prefs", handleEdit);
   server.begin();
 }

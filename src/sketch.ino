@@ -2,7 +2,7 @@
 #include "soc/soc.h"
 #include "soc/rtc_cntl_reg.h"
 
-#include <server.h>
+//#include <server.h>
 #include <wifi.h>
 #include <servo.h>
 
@@ -27,7 +27,7 @@ void initRtos() {
   xTaskCreate(
     WifiServer
     ,  "Wifi Server"
-    ,  2048
+    ,  8196
     ,  NULL
     ,  2
     ,  NULL

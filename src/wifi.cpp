@@ -73,8 +73,10 @@ void WifiServer(void *pvParameters) {
     if (WiFi.status() != WL_CONNECTED) {
       creds = loadCreds();
       connectToWiFi(creds.ssid, creds.password);
+	  setupServerEndpoints();
     }
 
-    setupServerEndpoints();
+	server.handleClient();
+
   }
 }
