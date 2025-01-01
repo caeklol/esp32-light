@@ -57,18 +57,29 @@ void handleToggle() {
   content += "<br>";
   content += "<br>";
   content += "<i font-size: 0.1em;>id: ";
-  content += state ? "2479eeb" : "7796a0a"; // ids for my ios shortcut to scrape
-											// these are random sha1 hashes for that cloudflare look
-  content += "<script>setTimeout(() => { window.location.href = '/' }, 500)</script>";
+  content += "<meta http-equiv='refresh' content='0; url=/'>";
   content += "</i>";
   
   server.send(200, "text/html", getPage(content));
+}
+
+void handleState() {
+	HTTPMethod method = server.method();
+	if (method == HTTP_POST) {
+		if (server.hasArg("state")) {
+			bool newState = server.arg("state") == "true";
+			state = newState;
+		} else {
+			server.send(500, "text/plain", "State not provided");
+		}
+	}
+	server.send(200, "text/plain", state ? "true" : "false");
 }
 
 void setupServerEndpoints() {
   Serial.println("Setting up endpoints");
   server.on("/", handleHome);
   server.on("/toggle", handleToggle);
-  //server.on("/prefs", handleEdit);
+  server.on("/state", handleState);
   server.begin();
 }
