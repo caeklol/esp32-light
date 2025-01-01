@@ -9,11 +9,10 @@ void ServoSync(void *pvParameters) {
   servo.attach(33);
   delay(50);
   servo.write(90);
+  delay(200);
   for (;;) {
     if (lastState != state) {
       Serial.println("Syncing state");
-      servo.attach(33);
-      delay(100);
 
       if (state) {
         servo.write(60);
@@ -25,10 +24,8 @@ void ServoSync(void *pvParameters) {
 
       delay(100);
       servo.write(90);
-      continue;
     } else {
       delay(250);
-      servo.detach();
     }
   }
 }
